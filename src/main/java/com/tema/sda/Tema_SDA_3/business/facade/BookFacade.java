@@ -15,4 +15,6 @@ public interface BookFacade {
 
     Book saveNewBook(final Book theNewBook);
 
+    boolean updateTheBook(final Book theNewBook);
+
 }

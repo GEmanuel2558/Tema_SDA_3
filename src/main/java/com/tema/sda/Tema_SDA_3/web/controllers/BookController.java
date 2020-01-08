@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -72,6 +73,68 @@ public class BookController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PutMapping(value = "/{bookTitle}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateProduct(@RequestBody final ResponseBookDTO theBookToUpdateWith,
+                                           @PathVariable(name = "bookTitle") String title,
+                                           @RequestHeader("If-Match") Integer ifMatch) {
+        logger.info("Update the book with the title " + title + " with the new information " + theBookToUpdateWith);
+
+        Optional<Book> bookOptional = this.facade.findByTitle(title);
+        return bookOptional.map(book -> {
+            //No need to cast the ResponseBookDTO to Book because I will use the book that the DB is returning back
+            if (book.getVersion() != ifMatch) {
+                logger.error("Somebody este had updated this product before this user had the change to do anything");
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+            book.setBorrowedTo(theBookToUpdateWith.getBorrowedTo());
+            book.setBorrow(theBookToUpdateWith.isBorrow());
+            book.setVolum(theBookToUpdateWith.getVolum());
+            book.setTotalNumberOfPages(theBookToUpdateWith.getTotalNumberOfPages());
+            book.setSection(theBookToUpdateWith.getSection());
+            book.setAuthor(theBookToUpdateWith.getAuthor());
+            book.setTitle(theBookToUpdateWith.getTitle());
+
+            if (this.facade.updateTheBook(book)) {
+                ResponseBookDTO theBodyToReturnBack = mapper.map(book, ResponseBookDTO.class);
+                final Link link = WebMvcLinkBuilder.linkTo(BookController.class).slash(book.getTitle()).withSelfRel();
+                try {
+                    return ResponseEntity.created(new URI(link.getHref())).eTag("" + book.getVersion()).body(theBodyToReturnBack);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+
+
+/*        Optional<Product> productOptional = this.productService.findById(id);
+        return productOptional.map(product -> {
+            if (!product.getVersion().equals(ifMatch)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
+
+            product.setLastName(theUpdatedProduct.getLastName());
+            product.setFirstName(theUpdatedProduct.getFirstName());
+
+            if (this.productService.updateTheProduct(product)) {
+                try {
+                    return ResponseEntity
+                            .ok()
+                            .location(new URI("/product/" + product.getId()))
+                            .eTag(product.getVersion().toString())
+                            .body(product);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        }).orElseGet(() -> ResponseEntity.notFound().build());*/
     }
 
 }

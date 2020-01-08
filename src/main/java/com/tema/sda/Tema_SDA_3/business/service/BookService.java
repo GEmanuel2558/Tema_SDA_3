@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
@@ -18,5 +17,7 @@ public interface BookService {
     Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle);
 
     Book saveNewBook(final Book theNewBook);
+
+    boolean updateTheBook(final Book theNewBook);
 
 }

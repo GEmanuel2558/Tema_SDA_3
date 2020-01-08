@@ -45,4 +45,21 @@ public class BookServiceImpl implements BookService {
         return this.repository.save(theNewBook);
     }
 
+    @Override
+    public boolean updateTheBook(final Book theNewBook) {
+        return this.repository.findAllByTitle(theNewBook.getTitle()).map(currentBook -> {
+            staticFillTheBookProperties(theNewBook, currentBook);
+            return true;
+        }).orElse(false);
+    }
+
+    private void staticFillTheBookProperties(Book theNewBook, Book currentBook) {
+        currentBook.setBorrowedTo(theNewBook.getBorrowedTo());
+        currentBook.setBorrow(theNewBook.isBorrow());
+        currentBook.setVolum(theNewBook.getVolum());
+        currentBook.setTotalNumberOfPages(theNewBook.getTotalNumberOfPages());
+        currentBook.setSection(theNewBook.getSection());
+        currentBook.setAuthor(theNewBook.getAuthor());
+        currentBook.setTitle(theNewBook.getTitle());
+    }
 }

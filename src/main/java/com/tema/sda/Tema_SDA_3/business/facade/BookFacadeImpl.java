@@ -29,7 +29,7 @@ public class BookFacadeImpl implements BookFacade {
     public Iterable<Book> findAll() {
         Try<Iterable<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(this.service::findAll));
         if (result.isFailure()) {
-            logger.error("We have a problem with the book service. It is not responding!");
+            logger.error("We have a problem with the book service. I can't call the findAll function!");
         }
         return result.getOrElse(new ArrayList<>());
     }
@@ -38,7 +38,7 @@ public class BookFacadeImpl implements BookFacade {
     public Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle) {
         Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findByTitle(bookTitle)));
         if (result.isFailure()) {
-            logger.error("We have a problem with the book service. It is not responding!");
+            logger.error("We have a problem with the book service. I can't call the findByTitle function!");
         }
         return result.get();
     }
@@ -47,9 +47,17 @@ public class BookFacadeImpl implements BookFacade {
     public Book saveNewBook(final Book theNewBook) {
         Try<Book> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.saveNewBook(theNewBook)));
         if (result.isFailure()) {
-            logger.error("We have a problem with the book service. It is not responding!");
+            logger.error("We have a problem with the book service. I can't call the save function!");
         }
         return result.get();
     }
 
+    @Override
+    public boolean updateTheBook(Book theNewBook) {
+        Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.updateTheBook(theNewBook)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the update function!");
+        }
+        return result.get();
+    }
 }
