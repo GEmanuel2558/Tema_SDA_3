@@ -13,4 +13,6 @@ public interface BookFacade {
 
     Optional<Book> findByTitle(@NotNull @NotEmpty String bookTitle);
 
+    Book saveNewBook(final Book theNewBook);
+
 }

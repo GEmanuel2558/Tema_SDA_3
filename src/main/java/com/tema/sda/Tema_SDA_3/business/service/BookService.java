@@ -17,4 +17,6 @@ public interface BookService {
 
     Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle);
 
+    Book saveNewBook(final Book theNewBook);
+
 }

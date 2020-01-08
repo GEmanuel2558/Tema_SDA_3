@@ -40,4 +40,9 @@ public class BookServiceImpl implements BookService {
         return this.repository.findAllByTitle(bookTitle);
     }
 
+    @Override
+    public Book saveNewBook(final Book theNewBook) {
+        return this.repository.save(theNewBook);
+    }
+
 }

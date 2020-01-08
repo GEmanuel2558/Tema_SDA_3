@@ -43,4 +43,13 @@ public class BookFacadeImpl implements BookFacade {
         return result.get();
     }
 
+    @Override
+    public Book saveNewBook(final Book theNewBook) {
+        Try<Book> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.saveNewBook(theNewBook)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. It is not responding!");
+        }
+        return result.get();
+    }
+
 }
