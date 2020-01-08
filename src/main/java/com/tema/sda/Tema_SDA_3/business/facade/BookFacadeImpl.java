@@ -44,6 +44,15 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
+    public Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum) {
+        Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAllByTitleAndAuthorAndVolum(title, author, volum)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the findAllByTitleAndAuthorAndVolum function!");
+        }
+        return result.get();
+    }
+
+    @Override
     public Book saveNewBook(final Book theNewBook) {
         Try<Book> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.saveNewBook(theNewBook)));
         if (result.isFailure()) {
@@ -66,6 +75,16 @@ public class BookFacadeImpl implements BookFacade {
         Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.deleteBook(title)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the update function!");
+        }
+        return result.get();
+    }
+
+
+    @Override
+    public boolean deleteBookByTitleAndAuthorAndVolum(String title, String author, int volum) {
+        Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.deleteBookByTitleAndAuthorAndVolum(title, author, volum)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the deleteBookByTitleAndAuthorAndVolum function!");
         }
         return result.get();
     }
