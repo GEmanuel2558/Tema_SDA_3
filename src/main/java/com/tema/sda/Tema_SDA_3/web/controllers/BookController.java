@@ -109,32 +109,18 @@ public class BookController {
                 return ResponseEntity.notFound().build();
             }
         }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
-
-/*        Optional<Product> productOptional = this.productService.findById(id);
-        return productOptional.map(product -> {
-            if (!product.getVersion().equals(ifMatch)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
-            }
-
-            product.setLastName(theUpdatedProduct.getLastName());
-            product.setFirstName(theUpdatedProduct.getFirstName());
-
-            if (this.productService.updateTheProduct(product)) {
-                try {
-                    return ResponseEntity
-                            .ok()
-                            .location(new URI("/product/" + product.getId()))
-                            .eTag(product.getVersion().toString())
-                            .body(product);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                }
+    @DeleteMapping(value = "/{bookTitle}")
+    public ResponseEntity<?> deleteTheProduct(@PathVariable(name = "bookTitle") String title) {
+        Optional<Book> bookOptional = this.facade.findByTitle(title);
+        return bookOptional.map(book -> {
+            if (this.facade.deleteBook(book.getTitle())) {
+                return ResponseEntity.ok().build();
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        }).orElseGet(() -> ResponseEntity.notFound().build());*/
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }

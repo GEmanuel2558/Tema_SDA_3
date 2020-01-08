@@ -20,4 +20,6 @@ public interface BookService {
 
     boolean updateTheBook(final Book theNewBook);
 
+    boolean deleteBook(final String title);
+
 }

@@ -17,4 +17,6 @@ public interface BookFacade {
 
     boolean updateTheBook(final Book theNewBook);
 
+    boolean deleteBook(final String title);
+
 }

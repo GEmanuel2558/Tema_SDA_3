@@ -60,4 +60,13 @@ public class BookFacadeImpl implements BookFacade {
         }
         return result.get();
     }
+
+    @Override
+    public boolean deleteBook(final String title) {
+        Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.deleteBook(title)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the update function!");
+        }
+        return result.get();
+    }
 }

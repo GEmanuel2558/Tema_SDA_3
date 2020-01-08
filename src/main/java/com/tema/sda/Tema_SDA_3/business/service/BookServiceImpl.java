@@ -53,6 +53,14 @@ public class BookServiceImpl implements BookService {
         }).orElse(false);
     }
 
+    @Override
+    public boolean deleteBook(String title) {
+        return this.repository.findAllByTitle(title).map(currentBook -> {
+            this.repository.delete(currentBook);
+            return true;
+        }).orElse(false);
+    }
+
     private void staticFillTheBookProperties(Book theNewBook, Book currentBook) {
         currentBook.setBorrowedTo(theNewBook.getBorrowedTo());
         currentBook.setBorrow(theNewBook.isBorrow());
