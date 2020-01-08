@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,9 +15,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 @RestController
@@ -38,11 +40,21 @@ public class BookController {
 
     @GetMapping
     @ResponseBody
-    public List<ResponseBookDTO> getAllBooks() {
-        logger.info("Get the books");
-        return ((List<Book>) this.facade.findAll()).stream()
-                .map(book -> mapper.map(book, ResponseBookDTO.class))
-                .collect(Collectors.toList());
+    public List<ResponseBookDTO> getAllBooks(@RequestParam(required = false, name = "sorted") Boolean sorted) {
+        if (null == sorted || !sorted) {
+            logger.info("Get all the books");
+            return ((List<Book>) this.facade.findAll()).stream()
+                    .map(book -> mapper.map(book, ResponseBookDTO.class))
+                    .collect(toList());
+        } else {
+            logger.info("Get all the books but sort them by the number of pages");
+            return this.facade.getAllBooksSortedByTotalNumberOfPages()
+                    .map(books -> books
+                            .stream()
+                            .map(book -> mapper.map(book, ResponseBookDTO.class))
+                            .collect(Collectors.toList()))
+                    .orElse(new ArrayList<>());
+        }
     }
 
     @GetMapping("/{bookTitle}")

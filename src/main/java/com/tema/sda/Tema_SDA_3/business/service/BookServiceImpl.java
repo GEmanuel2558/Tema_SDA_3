@@ -5,15 +5,17 @@ import com.tema.sda.Tema_SDA_3.data.repository.BookRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class BookServiceImpl implements BookService {
 
     private final BookRepository repository;
@@ -44,6 +46,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum) {
         return this.repository.findAllByTitleAndAuthorAndVolum(title, author, volum);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages() {
+        return this.repository.getAllBooksSortedByTotalNumberOfPages();
     }
 
     @Override

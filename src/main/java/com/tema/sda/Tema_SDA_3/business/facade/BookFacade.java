@@ -15,6 +15,8 @@ public interface BookFacade {
 
     Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
 
+    Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages();
+
     Book saveNewBook(final Book theNewBook);
 
     boolean updateTheBook(final Book theNewBook);

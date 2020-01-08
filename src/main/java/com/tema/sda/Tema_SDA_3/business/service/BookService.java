@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
@@ -25,5 +26,7 @@ public interface BookService {
     boolean deleteBookByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
 
     Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
+
+    Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages();
 
 }
