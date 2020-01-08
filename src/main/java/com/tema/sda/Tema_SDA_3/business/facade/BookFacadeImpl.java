@@ -8,7 +8,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Component
 public class BookFacadeImpl implements BookFacade {
@@ -29,6 +32,15 @@ public class BookFacadeImpl implements BookFacade {
             logger.error("We have a problem with the book service. It is not responding!");
         }
         return result.getOrElse(new ArrayList<>());
+    }
+
+    @Override
+    public Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle) {
+        Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findByTitle(bookTitle)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. It is not responding!");
+        }
+        return result.get();
     }
 
 }

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -36,8 +36,8 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Book> findByTitle(@NotNull @NotEmpty String bookTitle) {
-        return (List<Book>) this.repository.findAllByTitle(bookTitle);
+    public Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle) {
+        return this.repository.findAllByTitle(bookTitle);
     }
 
 }

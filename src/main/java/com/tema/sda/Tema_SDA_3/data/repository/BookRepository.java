@@ -5,12 +5,12 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Indexed;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
+import java.util.Optional;
 
 @Repository
 @Indexed
 public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
 
-    Collection<Book> findAllByTitle(String title);
+    Optional<Book> findAllByTitle(final String title);
 
 }
