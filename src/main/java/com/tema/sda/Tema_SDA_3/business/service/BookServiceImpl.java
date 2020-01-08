@@ -40,6 +40,12 @@ public class BookServiceImpl implements BookService {
         return this.repository.findAllByTitle(bookTitle);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum) {
+        return this.repository.findAllByTitleAndAuthorAndVolum(title, author, volum);
+    }
+
     @Override
     public Book saveNewBook(final Book theNewBook) {
         return this.repository.save(theNewBook);
@@ -59,6 +65,11 @@ public class BookServiceImpl implements BookService {
             this.repository.delete(currentBook);
             return true;
         }).orElse(false);
+    }
+
+    @Override
+    public boolean deleteBookByTitleAndAuthorAndVolum(String title, String author, int volum) {
+        return 0 != this.repository.deleteBookByTitleAndAuthorAndVolum(title, author, volum);
     }
 
     private void staticFillTheBookProperties(Book theNewBook, Book currentBook) {

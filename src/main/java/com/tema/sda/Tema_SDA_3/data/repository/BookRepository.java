@@ -13,4 +13,8 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
 
     Optional<Book> findAllByTitle(final String title);
 
+    Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
+
+    int deleteBookByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
+
 }

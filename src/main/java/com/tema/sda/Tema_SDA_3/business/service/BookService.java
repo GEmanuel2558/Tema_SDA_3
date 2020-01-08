@@ -22,4 +22,8 @@ public interface BookService {
 
     boolean deleteBook(final String title);
 
+    boolean deleteBookByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
+
+    Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
+
 }

@@ -13,10 +13,14 @@ public interface BookFacade {
 
     Optional<Book> findByTitle(@NotNull @NotEmpty String bookTitle);
 
+    Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
+
     Book saveNewBook(final Book theNewBook);
 
     boolean updateTheBook(final Book theNewBook);
 
     boolean deleteBook(final String title);
+
+    boolean deleteBookByTitleAndAuthorAndVolum(String title, String author, int volum);
 
 }

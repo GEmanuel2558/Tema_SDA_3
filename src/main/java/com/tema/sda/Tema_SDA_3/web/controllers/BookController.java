@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/book", produces = MediaType.APPLICATION_JSON_VALUE)
-@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
+//@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class BookController {
 
     private static final Logger logger = LogManager.getLogger(BookController.class);
@@ -62,7 +62,7 @@ public class BookController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProduct(@RequestBody ResponseBookDTO theNewBook) {
+    public ResponseEntity<?> createBook(@RequestBody ResponseBookDTO theNewBook) {
         logger.info("I will insert a new book: " + theNewBook);
         Book savedBook = this.facade.saveNewBook(mapper.map(theNewBook, Book.class));
         try {
@@ -76,9 +76,9 @@ public class BookController {
     }
 
     @PutMapping(value = "/{bookTitle}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateProduct(@RequestBody final ResponseBookDTO theBookToUpdateWith,
-                                           @PathVariable(name = "bookTitle") String title,
-                                           @RequestHeader("If-Match") Integer ifMatch) {
+    public ResponseEntity<?> updateBook(@RequestBody final ResponseBookDTO theBookToUpdateWith,
+                                        @PathVariable(name = "bookTitle") String title,
+                                        @RequestHeader("If-Match") Integer ifMatch) {
         logger.info("Update the book with the title " + title + " with the new information " + theBookToUpdateWith);
 
         Optional<Book> bookOptional = this.facade.findByTitle(title);
@@ -112,10 +112,24 @@ public class BookController {
     }
 
     @DeleteMapping(value = "/{bookTitle}")
-    public ResponseEntity<?> deleteTheProduct(@PathVariable(name = "bookTitle") String title) {
+    public ResponseEntity<?> deleteTheBook(@PathVariable(name = "bookTitle") String title) {
         Optional<Book> bookOptional = this.facade.findByTitle(title);
         return bookOptional.map(book -> {
             if (this.facade.deleteBook(book.getTitle())) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteTheProduct(@RequestParam(name = "bookTitle") String title,
+                                              @RequestParam(name = "bookAuthor") String author,
+                                              @RequestParam(name = "bookVolume") Integer volume) {
+        Optional<Book> bookOptional = this.facade.findAllByTitleAndAuthorAndVolum(title, author, volume);
+        return bookOptional.map(book -> {
+            if (this.facade.deleteBookByTitleAndAuthorAndVolum(title, author, volume)) {
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
