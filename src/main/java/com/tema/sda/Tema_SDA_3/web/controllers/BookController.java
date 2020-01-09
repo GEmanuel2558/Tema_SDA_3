@@ -27,7 +27,6 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = "/book", produces = MediaType.APPLICATION_JSON_VALUE)
-//@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class BookController {
 
     private static final Logger logger = LogManager.getLogger(BookController.class);

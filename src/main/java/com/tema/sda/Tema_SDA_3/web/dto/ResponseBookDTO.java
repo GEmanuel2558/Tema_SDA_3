@@ -1,12 +1,13 @@
 package com.tema.sda.Tema_SDA_3.web.dto;
 
-import javax.validation.constraints.NotNull;
+import com.tema.sda.Tema_SDA_3.custom.annotations.CriticalFieldsValidation;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 public class ResponseBookDTO implements Serializable {
 
-    @NotNull
+    @CriticalFieldsValidation
     private String title;
 
     private int totalNumberOfPages;
@@ -16,7 +17,8 @@ public class ResponseBookDTO implements Serializable {
     private boolean isBorrow;
 
     private String borrowedTo;
-    @NotNull
+    
+    @CriticalFieldsValidation
     private String author;
 
     private String section;
