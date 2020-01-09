@@ -31,4 +31,6 @@ public interface BookService {
 
     Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow);
 
+    Optional<List<Book>> findAllByVolum(int volum);
+
 }

@@ -27,4 +27,6 @@ public interface BookFacade {
 
     Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow);
 
+    Optional<List<Book>> findAllByVolum(int volum);
+
 }

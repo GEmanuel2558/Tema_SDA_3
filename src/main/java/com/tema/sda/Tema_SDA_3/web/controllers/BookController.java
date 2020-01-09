@@ -13,11 +13,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -71,6 +74,22 @@ public class BookController {
                         .map(book -> mapper.map(book, ResponseBookDTO.class))
                         .collect(Collectors.toList()))
                 .orElse(new ArrayList<>());
+    }
+
+    @GetMapping("/volum")
+    @ResponseBody
+    public List<ResponseBookDTO> findAllByVolum(@Valid @NotNull @RequestParam(name = "volum") Integer volum) {
+        logger.info("Get all the books by volum " + volum);
+        return this.facade.findAllByVolum(volum)
+                .map(convertEntityToDto())
+                .orElse(new ArrayList<>());
+    }
+
+    private Function<List<Book>, List<ResponseBookDTO>> convertEntityToDto() {
+        return books -> books
+                .stream()
+                .map(book -> mapper.map(book, ResponseBookDTO.class))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{bookTitle}")

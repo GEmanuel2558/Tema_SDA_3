@@ -20,10 +20,12 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
 
     int deleteBookByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
 
+    Optional<List<Book>> findAllByVolum(int volum);
+
     @Query("select b from Book b order by b.totalNumberOfPages asc")
-    Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages();
+    Optional<List<Book>> customGetAllBooksSortedByTotalNumberOfPages();
 
     @Query("select b from Book b where b.isBorrow = :isBorrow")
-    Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow);
+    Optional<List<Book>> customGetAllBooksThatAreBorrowed(final Boolean isBorrow);
 
 }

@@ -72,6 +72,15 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
+    public Optional<List<Book>> findAllByVolum(int volum) {
+        Try<Optional<List<Book>>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAllByVolum(volum)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the findAllByVolum function!");
+        }
+        return result.get();
+    }
+
+    @Override
     public Book saveNewBook(final Book theNewBook) {
         Try<Book> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.saveNewBook(theNewBook)));
         if (result.isFailure()) {
