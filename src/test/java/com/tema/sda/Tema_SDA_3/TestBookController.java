@@ -14,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
@@ -25,7 +24,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {TemaSda3Application.class}, properties = {"server.port=8080"})
@@ -39,10 +37,10 @@ public class TestBookController {
     @Autowired
     private MockMvc mockMvc;
 
-    Book book = new Book();
-    Book book2 = new Book();
-    Book book3 = new Book();
-    Book book4 = new Book();
+    private Book book;
+    private Book book2;
+    private Book book3;
+    private Book book4;
 
     public TestBookController() {
         book = new Book();
