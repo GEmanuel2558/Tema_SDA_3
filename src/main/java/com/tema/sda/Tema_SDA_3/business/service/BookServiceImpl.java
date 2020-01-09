@@ -66,6 +66,12 @@ public class BookServiceImpl implements BookService {
         return this.repository.findAllByVolum(volum);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<List<Book>> getAllBooksBorrowedTo(final String borrowedTo) {
+        return this.repository.customGetAllBooksBorrowedTo(borrowedTo);
+    }
+
     @Override
     public Book saveNewBook(final Book theNewBook) {
         return this.repository.save(theNewBook);

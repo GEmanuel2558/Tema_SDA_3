@@ -33,4 +33,6 @@ public interface BookService {
 
     Optional<List<Book>> findAllByVolum(int volum);
 
+    Optional<List<Book>> getAllBooksBorrowedTo(final String borrowedTo);
+
 }

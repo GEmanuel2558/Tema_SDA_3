@@ -29,4 +29,6 @@ public interface BookFacade {
 
     Optional<List<Book>> findAllByVolum(int volum);
 
+    Optional<List<Book>> getAllBooksBorrowedTo(final String borrowedTo);
+
 }

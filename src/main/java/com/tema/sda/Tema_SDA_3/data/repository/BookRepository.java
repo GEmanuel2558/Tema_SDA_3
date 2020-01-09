@@ -28,4 +28,7 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
     @Query("select b from Book b where b.isBorrow = :isBorrow")
     Optional<List<Book>> customGetAllBooksThatAreBorrowed(final Boolean isBorrow);
 
+    @Query("select b from Book b where b.borrowedTo = :borrowedTo")
+    Optional<List<Book>> customGetAllBooksBorrowedTo(final String borrowedTo);
+
 }
