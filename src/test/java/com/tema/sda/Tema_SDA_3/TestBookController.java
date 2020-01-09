@@ -20,7 +20,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static com.tema.sda.Tema_SDA_3.JsonCastHelper.asJsonString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -103,10 +105,40 @@ public class TestBookController {
                 .andExpect(header().string(HttpHeaders.ETAG, "\"0\""))
                 .andExpect(header().string(HttpHeaders.LOCATION, "http://localhost/book/Cartea%201"))
                 //Validate the returned fields
-                .andExpect((ResultMatcher) jsonPath("$.title").value(book.getTitle()))
+                .andExpect(jsonPath("$.title").value(book.getTitle()))
                 .andExpect(jsonPath("$.totalNumberOfPages").value(book.getTotalNumberOfPages()))
                 .andExpect(jsonPath("$.borrow").value(book.isBorrow()))
                 .andExpect(jsonPath("$.author").value(book.getAuthor()));
+    }
+
+    @Test
+    @DisplayName("POST /book - return the saved book with success")
+    public void givenPostRequestForWithOneBook_ThenGetSuccessfulStatus() throws Exception {
+        Book newBookToSave = new Book();
+        newBookToSave.setAuthor("Valeria");
+        newBookToSave.setBorrow(true);
+        newBookToSave.setBorrowedTo("Vasile");
+        newBookToSave.setSection("TEHNIC");
+        newBookToSave.setTitle("Cartea 5");
+        newBookToSave.setTotalNumberOfPages(50);
+        newBookToSave.setVolum(1);
+        doReturn(newBookToSave).when(service).saveNewBook(any(Book.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/book")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJsonString(newBookToSave)))
+                //Validate response code and status
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                //validate headers
+                .andExpect(header().string(HttpHeaders.ETAG, "\"0\""))
+                .andExpect(header().string(HttpHeaders.LOCATION, "http://localhost/book/Cartea%205"))
+                //Validate the returned fields
+                .andExpect(jsonPath("$.title").value(newBookToSave.getTitle()))
+                .andExpect(jsonPath("$.totalNumberOfPages").value(newBookToSave.getTotalNumberOfPages()))
+                .andExpect(jsonPath("$.borrow").value(newBookToSave.isBorrow()))
+                .andExpect(jsonPath("$.author").value(newBookToSave.getAuthor()));
+
     }
 
 }
