@@ -1,10 +1,12 @@
 package com.tema.sda.Tema_SDA_3.web.dto;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class ResponseBookDTO implements Serializable {
 
+    @NotNull
     private String title;
 
     private int totalNumberOfPages;
@@ -14,7 +16,7 @@ public class ResponseBookDTO implements Serializable {
     private boolean isBorrow;
 
     private String borrowedTo;
-
+    @NotNull
     private String author;
 
     private String section;

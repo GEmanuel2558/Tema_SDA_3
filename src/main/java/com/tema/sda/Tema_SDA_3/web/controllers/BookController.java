@@ -106,7 +106,7 @@ public class BookController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBook(@RequestBody ResponseBookDTO theNewBook) {
+    public ResponseEntity<?> createBook(@Valid @RequestBody ResponseBookDTO theNewBook) {
         logger.info("I will insert a new book: " + theNewBook);
         Book savedBook = this.facade.saveNewBook(mapper.map(theNewBook, Book.class));
         try {
