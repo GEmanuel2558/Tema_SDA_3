@@ -40,7 +40,7 @@ public class BookController {
         this.mapper = mapper;
     }
 
-    @GetMapping
+    @GetMapping(params = {"sorted"})
     @ResponseBody
     public ResponseEntity<?> getAllBooks(@RequestParam(required = false, name = "sorted") Boolean sorted) {
         if (null == sorted || !sorted) {
