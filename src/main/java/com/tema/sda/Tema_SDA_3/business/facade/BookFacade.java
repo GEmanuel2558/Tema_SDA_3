@@ -25,4 +25,6 @@ public interface BookFacade {
 
     boolean deleteBookByTitleAndAuthorAndVolum(String title, String author, int volum);
 
+    Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow);
+
 }

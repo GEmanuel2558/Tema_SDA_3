@@ -57,6 +57,22 @@ public class BookController {
         }
     }
 
+    @GetMapping("/borrow")
+    @ResponseBody
+    public List<ResponseBookDTO> findAllBooksThatAreBorrowed(@RequestParam(required = false, name = "isBorrow")
+                                                                     Boolean isBorrow) {
+        logger.info("Get all the books that are borrowed " + isBorrow);
+        if (null == isBorrow) {
+            isBorrow = false;
+        }
+        return this.facade.findAllBooksThatAreBorrowed(isBorrow)
+                .map(books -> books
+                        .stream()
+                        .map(book -> mapper.map(book, ResponseBookDTO.class))
+                        .collect(Collectors.toList()))
+                .orElse(new ArrayList<>());
+    }
+
     @GetMapping("/{bookTitle}")
     @ResponseBody
     public ResponseEntity<?> getBooksByIdOrAll(@PathVariable String bookTitle) {

@@ -54,6 +54,12 @@ public class BookServiceImpl implements BookService {
         return this.repository.getAllBooksSortedByTotalNumberOfPages();
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow) {
+        return this.repository.findAllBooksThatAreBorrowed(isBorrow);
+    }
+
     @Override
     public Book saveNewBook(final Book theNewBook) {
         return this.repository.save(theNewBook);

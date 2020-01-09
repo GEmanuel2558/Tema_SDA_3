@@ -29,4 +29,6 @@ public interface BookService {
 
     Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages();
 
+    Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow);
+
 }
