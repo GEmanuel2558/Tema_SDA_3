@@ -15,6 +15,8 @@ public interface BookFacade {
 
     Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum);
 
+    Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages();
+
     Book saveNewBook(final Book theNewBook);
 
     boolean updateTheBook(final Book theNewBook);
@@ -22,5 +24,11 @@ public interface BookFacade {
     boolean deleteBook(final String title);
 
     boolean deleteBookByTitleAndAuthorAndVolum(String title, String author, int volum);
+
+    Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow);
+
+    Optional<List<Book>> findAllByVolum(int volum);
+
+    Optional<List<Book>> getAllBooksBorrowedTo(final String borrowedTo);
 
 }

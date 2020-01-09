@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -48,6 +49,42 @@ public class BookFacadeImpl implements BookFacade {
         Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAllByTitleAndAuthorAndVolum(title, author, volum)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the findAllByTitleAndAuthorAndVolum function!");
+        }
+        return result.get();
+    }
+
+    @Override
+    public Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages() {
+        Try<Optional<List<Book>>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(this.service::getAllBooksSortedByTotalNumberOfPages));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the getAllBooksSortedByTotalNumberOfPages function!");
+        }
+        return result.get();
+    }
+
+    @Override
+    public Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow) {
+        Try<Optional<List<Book>>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAllBooksThatAreBorrowed(isBorrow)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the findAllByBorrow function!");
+        }
+        return result.get();
+    }
+
+    @Override
+    public Optional<List<Book>> findAllByVolum(int volum) {
+        Try<Optional<List<Book>>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAllByVolum(volum)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the findAllByVolum function!");
+        }
+        return result.get();
+    }
+
+    @Override
+    public Optional<List<Book>> getAllBooksBorrowedTo(final String borrowedTo) {
+        Try<Optional<List<Book>>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.getAllBooksBorrowedTo(borrowedTo)));
+        if (result.isFailure()) {
+            logger.error("We have a problem with the book service. I can't call the getAllBooksBorrowedTo function!");
         }
         return result.get();
     }

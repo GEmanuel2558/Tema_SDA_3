@@ -7,18 +7,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 @RestController
@@ -38,11 +42,51 @@ public class BookController {
 
     @GetMapping
     @ResponseBody
-    public List<ResponseBookDTO> getAllBooks() {
-        logger.info("Get the books");
-        return ((List<Book>) this.facade.findAll()).stream()
-                .map(book -> mapper.map(book, ResponseBookDTO.class))
-                .collect(Collectors.toList());
+    public ResponseEntity<?> getAllBooks(@RequestParam(required = false, name = "sorted") Boolean sorted) {
+        if (null == sorted || !sorted) {
+            logger.info("Get all the books");
+            return ResponseEntity.ok(((List<Book>) this.facade.findAll()).stream()
+                    .map(book -> mapper.map(book, ResponseBookDTO.class))
+                    .collect(toList()));
+        } else {
+            logger.info("Get all the books but sort them by the number of pages");
+            return this.facade.getAllBooksSortedByTotalNumberOfPages()
+                    .map(convertEntityToDto())
+                    .orElse(ResponseEntity.notFound().build());
+        }
+    }
+
+    @GetMapping(value = "/borrow", params = {"isBorrow"})
+    @ResponseBody
+    public ResponseEntity<?> findAllBooksThatAreBorrowed(@RequestParam(required = false, name = "isBorrow")
+                                                                 Boolean isBorrow) {
+        logger.info("Get all the books that are borrowed " + isBorrow);
+        if (null == isBorrow) {
+            isBorrow = false;
+        }
+        return this.facade.findAllBooksThatAreBorrowed(isBorrow)
+                .map(convertEntityToDto())
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/borrow", params = {"borrowedTo"})
+    @ResponseBody
+    public ResponseEntity<?> getAllBooksBorrowedTo(@RequestParam(required = false, name = "borrowedTo")
+                                                           String borrowedTo) {
+        logger.info("Get all the books that is borrowed to " + borrowedTo);
+        return this.facade.getAllBooksBorrowedTo(borrowedTo)
+                .map(convertEntityToDto())
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+    @GetMapping(value = "/volum", params = {"volum"})
+    @ResponseBody
+    public ResponseEntity<?> findAllByVolum(@Valid @NotNull @RequestParam(name = "volum") Integer volum) {
+        logger.info("Get all the books by volum " + volum);
+        return this.facade.findAllByVolum(volum)
+                .map(convertEntityToDto())
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{bookTitle}")
@@ -123,7 +167,7 @@ public class BookController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping
+    @DeleteMapping(params = {"bookTitle", "bookAuthor", "bookVolume"})
     public ResponseEntity<?> deleteTheProduct(@RequestParam(name = "bookTitle") String title,
                                               @RequestParam(name = "bookAuthor") String author,
                                               @RequestParam(name = "bookVolume") Integer volume) {
@@ -135,6 +179,16 @@ public class BookController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private Function<List<Book>, ResponseEntity<List<ResponseBookDTO>>> convertEntityToDto() {
+        return books -> {
+            List<ResponseBookDTO> bodyOfTheResponse = books
+                    .stream()
+                    .map(book -> mapper.map(book, ResponseBookDTO.class))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(bodyOfTheResponse);
+        };
     }
 
 }

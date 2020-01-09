@@ -1,5 +1,7 @@
 package com.tema.sda.Tema_SDA_3.data.entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -25,7 +27,8 @@ public class Book implements Serializable {
     @Column(name = "volum", nullable = false)
     private int volum;
 
-    @Column(name = "is_borrow", columnDefinition = "boolean default false")
+    @Column(name = "is_borrow", columnDefinition = "boolean default false", length = 1)
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean isBorrow;
 
     @Column(name = "borrowed_to")
