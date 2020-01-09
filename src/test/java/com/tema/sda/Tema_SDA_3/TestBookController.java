@@ -141,7 +141,7 @@ public class TestBookController {
 
     @Test
     @DisplayName("PUT /book/Carte 1 - Update with success")
-    public void testProductPutSuccess() throws Exception {
+    public void givenPutRequestForWithOneBook_ThenGetSuccessfulStatus() throws Exception {
         Book bookToUpdate = new Book();
         bookToUpdate.setAuthor("Valeria");
         bookToUpdate.setBorrow(true);
@@ -166,6 +166,57 @@ public class TestBookController {
                 .andExpect(jsonPath("$.totalNumberOfPages").value(bookToUpdate.getTotalNumberOfPages()))
                 .andExpect(jsonPath("$.borrow").value(bookToUpdate.isBorrow()))
                 .andExpect(jsonPath("$.author").value(bookToUpdate.getAuthor()));
+    }
+
+    @Test
+    @DisplayName("PUT /book/Carte 1 - Not Found")
+    public void givenPutRequestForWithOneBook_ThenGetFailedStatus() throws Exception {
+        Book bookToUpdate = new Book();
+        bookToUpdate.setAuthor("Valeria");
+        bookToUpdate.setBorrow(true);
+        bookToUpdate.setBorrowedTo("Vasile");
+        bookToUpdate.setSection("TEHNIC");
+        bookToUpdate.setTitle("Cartea 5");
+        bookToUpdate.setTotalNumberOfPages(50);
+        bookToUpdate.setVolum(1);
+
+        doReturn(Optional.empty()).when(service).findByTitle(book.getTitle());
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/book/{bookTitle}", 1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.IF_MATCH, 0)
+                .content(asJsonString(bookToUpdate)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("DELETE /book/Carte 1 - Success")
+    public void givenDeleteRequestForWithOneBook_ThenGetSuccessfulStatus() throws Exception {
+        doReturn(Optional.of(book)).when(service).findByTitle(book.getTitle());
+        doReturn(true).when(service).deleteBook(any(String.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/book/{bookTitle}", book.getTitle()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("DELETE /book/Carte 1 - Failed")
+    public void givenDeleteRequestForWithOneBook_ThenGetFailedStatus() throws Exception {
+
+        doReturn(Optional.of(book)).when(service).findByTitle(book.getTitle());
+        doReturn(false).when(service).deleteBook(any(String.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/book/{bookTitle}", book.getTitle()))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("DELETE /book/Carte 1 - Not found")
+    public void givenDeleteRequestForWithOneBook_ThenGetNotFoundStatus() throws Exception {
+        doReturn(Optional.empty()).when(service).findByTitle(book.getTitle());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/book/{bookTitle}", book.getTitle()))
+                .andExpect(status().isNotFound());
     }
 
 }
