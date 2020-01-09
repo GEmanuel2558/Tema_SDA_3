@@ -2,7 +2,7 @@ package com.tema.sda.Tema_SDA_3.web.controllers;
 
 import com.tema.sda.Tema_SDA_3.business.facade.BookFacade;
 import com.tema.sda.Tema_SDA_3.data.entity.Book;
-import com.tema.sda.Tema_SDA_3.web.dto.ResponseBookDTO;
+import com.tema.sda.Tema_SDA_3.web.dto.BookDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
@@ -45,7 +45,7 @@ public class BookController {
         if (null == sorted || !sorted) {
             logger.info("Get all the books");
             return ResponseEntity.ok(((List<Book>) this.facade.findAll()).stream()
-                    .map(book -> mapper.map(book, ResponseBookDTO.class))
+                    .map(book -> mapper.map(book, BookDTO.class))
                     .collect(toList()));
         } else {
             logger.info("Get all the books but sort them by the number of pages");
@@ -94,7 +94,7 @@ public class BookController {
         logger.info("Get the book with the title " + bookTitle);
         return this.facade.findByTitle(bookTitle).map(book -> {
             try {
-                ResponseBookDTO theBody = mapper.map(book, ResponseBookDTO.class);
+                BookDTO theBody = mapper.map(book, BookDTO.class);
                 final Link link = WebMvcLinkBuilder.linkTo(BookController.class).slash(book.getTitle()).withSelfRel();
                 return ResponseEntity.ok().eTag("" + book.getVersion()).location(new URI(link.getHref())).body(theBody);
             } catch (URISyntaxException e) {
@@ -105,11 +105,11 @@ public class BookController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBook(@Valid @RequestBody ResponseBookDTO theNewBook) {
+    public ResponseEntity<?> createBook(@Valid @RequestBody BookDTO theNewBook) {
         logger.info("I will insert a new book: " + theNewBook);
         Book savedBook = this.facade.saveNewBook(mapper.map(theNewBook, Book.class));
         try {
-            ResponseBookDTO theBodyToReturnBack = mapper.map(savedBook, ResponseBookDTO.class);
+            BookDTO theBodyToReturnBack = mapper.map(savedBook, BookDTO.class);
             final Link link = WebMvcLinkBuilder.linkTo(BookController.class).slash(savedBook.getTitle()).withSelfRel();
             return ResponseEntity.created(new URI(link.getHref())).eTag("" + savedBook.getVersion()).body(theBodyToReturnBack);
         } catch (URISyntaxException e) {
@@ -119,7 +119,7 @@ public class BookController {
     }
 
     @PutMapping(value = "/{bookTitle}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateBook(@RequestBody final ResponseBookDTO theBookToUpdateWith,
+    public ResponseEntity<?> updateBook(@RequestBody final BookDTO theBookToUpdateWith,
                                         @PathVariable(name = "bookTitle") String title,
                                         @RequestHeader("If-Match") Integer ifMatch) {
         logger.info("Update the book with the title " + title + " with the new information " + theBookToUpdateWith);
@@ -128,7 +128,7 @@ public class BookController {
         return bookOptional.map(book -> {
             //No need to cast the ResponseBookDTO to Book because I will use the book that the DB is returning back
             if (book.getVersion() != ifMatch) {
-                logger.error("Somebody este had updated this product before this user had the change to do anything");
+                logger.error("Somebody este had updated this book before this user had the change to do anything");
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             }
             book.setBorrowedTo(theBookToUpdateWith.getBorrowedTo());
@@ -140,7 +140,7 @@ public class BookController {
             book.setTitle(theBookToUpdateWith.getTitle());
 
             if (this.facade.updateTheBook(book)) {
-                ResponseBookDTO theBodyToReturnBack = mapper.map(book, ResponseBookDTO.class);
+                BookDTO theBodyToReturnBack = mapper.map(book, BookDTO.class);
                 final Link link = WebMvcLinkBuilder.linkTo(BookController.class).slash(book.getTitle()).withSelfRel();
                 try {
                     return ResponseEntity.created(new URI(link.getHref())).eTag("" + book.getVersion()).body(theBodyToReturnBack);
@@ -167,9 +167,9 @@ public class BookController {
     }
 
     @DeleteMapping(params = {"bookTitle", "bookAuthor", "bookVolume"})
-    public ResponseEntity<?> deleteTheProduct(@RequestParam(name = "bookTitle") String title,
-                                              @RequestParam(name = "bookAuthor") String author,
-                                              @RequestParam(name = "bookVolume") Integer volume) {
+    public ResponseEntity<?> deleteTheBook(@RequestParam(name = "bookTitle") String title,
+                                           @RequestParam(name = "bookAuthor") String author,
+                                           @RequestParam(name = "bookVolume") Integer volume) {
         Optional<Book> bookOptional = this.facade.findAllByTitleAndAuthorAndVolum(title, author, volume);
         return bookOptional.map(book -> {
             if (this.facade.deleteBookByTitleAndAuthorAndVolum(title, author, volume)) {
@@ -180,11 +180,11 @@ public class BookController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    private Function<List<Book>, ResponseEntity<List<ResponseBookDTO>>> convertEntityToDto() {
+    private Function<List<Book>, ResponseEntity<List<BookDTO>>> convertEntityToDto() {
         return books -> {
-            List<ResponseBookDTO> bodyOfTheResponse = books
+            List<BookDTO> bodyOfTheResponse = books
                     .stream()
-                    .map(book -> mapper.map(book, ResponseBookDTO.class))
+                    .map(book -> mapper.map(book, BookDTO.class))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(bodyOfTheResponse);
         };
