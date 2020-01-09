@@ -141,4 +141,33 @@ public class TestBookController {
 
     }
 
+    @Test
+    @DisplayName("PUT /book/Carte 1 - Update with success")
+    public void testProductPutSuccess() throws Exception {
+        Book bookToUpdate = new Book();
+        bookToUpdate.setAuthor("Valeria");
+        bookToUpdate.setBorrow(true);
+        bookToUpdate.setBorrowedTo("Vasile");
+        bookToUpdate.setSection("TEHNIC");
+        bookToUpdate.setTitle("Cartea 5");
+        bookToUpdate.setTotalNumberOfPages(50);
+        bookToUpdate.setVolum(1);
+
+        doReturn(Optional.of(book)).when(service).findByTitle(book.getTitle());
+        doReturn(true).when(service).updateTheBook(any(Book.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/book/{bookTitle}", book.getTitle())
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header(HttpHeaders.IF_MATCH, 0)
+                .content(asJsonString(bookToUpdate)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.ETAG, "\"0\""))
+                .andExpect(header().string(HttpHeaders.LOCATION, "http://localhost/book/Cartea%205"))
+                .andExpect(jsonPath("$.title").value(bookToUpdate.getTitle()))
+                .andExpect(jsonPath("$.totalNumberOfPages").value(bookToUpdate.getTotalNumberOfPages()))
+                .andExpect(jsonPath("$.borrow").value(bookToUpdate.isBorrow()))
+                .andExpect(jsonPath("$.author").value(bookToUpdate.getAuthor()));
+    }
+
 }
