@@ -1,6 +1,6 @@
 package com.tema.sda.Tema_SDA_3.business.facade;
 
-import com.tema.sda.Tema_SDA_3.business.service.BookService;
+import com.tema.sda.Tema_SDA_3.business.service.book.BookService;
 import com.tema.sda.Tema_SDA_3.data.entity.Book;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.vavr.control.Try;
