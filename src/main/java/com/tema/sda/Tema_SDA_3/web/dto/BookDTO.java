@@ -1,10 +1,13 @@
 package com.tema.sda.Tema_SDA_3.web.dto;
 
+import com.tema.sda.Tema_SDA_3.validation.annotations.CriticalFieldsValidation;
+
 import java.io.Serializable;
 import java.util.Objects;
 
-public class ResponseBookDTO implements Serializable {
+public class BookDTO implements Serializable {
 
+    @CriticalFieldsValidation
     private String title;
 
     private int totalNumberOfPages;
@@ -15,6 +18,7 @@ public class ResponseBookDTO implements Serializable {
 
     private String borrowedTo;
 
+    @CriticalFieldsValidation
     private String author;
 
     private String section;
@@ -80,14 +84,14 @@ public class ResponseBookDTO implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ResponseBookDTO responseBookDTO = (ResponseBookDTO) o;
-        return title.equals(responseBookDTO.title) &&
-                totalNumberOfPages == responseBookDTO.totalNumberOfPages &&
-                volum == responseBookDTO.volum &&
-                isBorrow == responseBookDTO.isBorrow &&
-                Objects.equals(borrowedTo, responseBookDTO.borrowedTo) &&
-                Objects.equals(author, responseBookDTO.author) &&
-                Objects.equals(section, responseBookDTO.section);
+        BookDTO bookDTO = (BookDTO) o;
+        return title.equals(bookDTO.title) &&
+                totalNumberOfPages == bookDTO.totalNumberOfPages &&
+                volum == bookDTO.volum &&
+                isBorrow == bookDTO.isBorrow &&
+                Objects.equals(borrowedTo, bookDTO.borrowedTo) &&
+                Objects.equals(author, bookDTO.author) &&
+                Objects.equals(section, bookDTO.section);
     }
 
     @Override

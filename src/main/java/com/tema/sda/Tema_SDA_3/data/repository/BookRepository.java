@@ -4,9 +4,11 @@ import com.tema.sda.Tema_SDA_3.data.entity.Book;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Indexed;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,5 +32,8 @@ public interface BookRepository extends PagingAndSortingRepository<Book, Long> {
 
     @Query("select b from Book b where b.borrowedTo = :borrowedTo")
     Optional<List<Book>> customGetAllBooksBorrowedTo(final String borrowedTo);
+
+    @Query("delete from Book b where b.id in :keys")
+    void customDeleteBooksByIds(@Param("keys") Collection<Long> keys);
 
 }

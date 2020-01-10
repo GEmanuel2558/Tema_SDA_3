@@ -1,4 +1,4 @@
-package com.tema.sda.Tema_SDA_3.business.service;
+package com.tema.sda.Tema_SDA_3.business.service.book;
 
 import com.tema.sda.Tema_SDA_3.data.entity.Book;
 import com.tema.sda.Tema_SDA_3.data.repository.BookRepository;
