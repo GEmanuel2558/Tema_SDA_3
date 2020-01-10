@@ -13,10 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.cache.annotation.CacheDefaults;
-import javax.cache.annotation.CachePut;
-import javax.cache.annotation.CacheRemove;
-import javax.cache.annotation.CacheResult;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
@@ -31,7 +27,6 @@ import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping(value = "/book", produces = MediaType.APPLICATION_JSON_VALUE)
-@CacheDefaults(cacheName = "bookCache")
 public class BookController {
 
     private static final Logger logger = LogManager.getLogger(BookController.class);
@@ -46,7 +41,6 @@ public class BookController {
 
     @GetMapping
     @ResponseBody
-    @CacheResult
     public ResponseEntity<?> getAllBooks(@RequestParam(required = false, name = "sorted") Boolean sorted) {
         if (null == sorted || !sorted) {
             logger.info("Get all the books");
@@ -63,7 +57,6 @@ public class BookController {
 
     @GetMapping(value = "/borrow", params = {"isBorrow"})
     @ResponseBody
-    @CacheResult
     public ResponseEntity<?> findAllBooksThatAreBorrowed(@RequestParam(required = false, name = "isBorrow")
                                                                  Boolean isBorrow) {
         logger.info("Get all the books that are borrowed " + isBorrow);
@@ -77,7 +70,6 @@ public class BookController {
 
     @GetMapping(value = "/borrow", params = {"borrowedTo"})
     @ResponseBody
-    @CacheResult
     public ResponseEntity<?> getAllBooksBorrowedTo(@RequestParam(required = false, name = "borrowedTo")
                                                            String borrowedTo) {
         logger.info("Get all the books that is borrowed to " + borrowedTo);
@@ -89,7 +81,6 @@ public class BookController {
 
     @GetMapping(value = "/volum", params = {"volum"})
     @ResponseBody
-    @CacheResult
     public ResponseEntity<?> findAllByVolum(@Valid @NotNull @RequestParam(name = "volum") Integer volum) {
         logger.info("Get all the books by volum " + volum);
         return this.facade.findAllByVolum(volum)
@@ -99,7 +90,6 @@ public class BookController {
 
     @GetMapping("/{bookTitle}")
     @ResponseBody
-    @CacheResult
     public ResponseEntity<?> getBooksByIdOrAll(@PathVariable String bookTitle) {
         logger.info("Get the book with the title " + bookTitle);
         return this.facade.findByTitle(bookTitle).map(book -> {
@@ -129,7 +119,6 @@ public class BookController {
     }
 
     @PutMapping(value = "/{bookTitle}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CachePut
     public ResponseEntity<?> updateBook(@RequestBody final BookDTO theBookToUpdateWith,
                                         @PathVariable(name = "bookTitle") String title,
                                         @RequestHeader("If-Match") Integer ifMatch) {
@@ -166,7 +155,6 @@ public class BookController {
     }
 
     @DeleteMapping(value = "/{bookTitle}")
-    @CacheRemove
     public ResponseEntity<?> deleteTheBook(@PathVariable(name = "bookTitle") String title) {
         Optional<Book> bookOptional = this.facade.findByTitle(title);
         return bookOptional.map(book -> {
@@ -179,7 +167,6 @@ public class BookController {
     }
 
     @DeleteMapping(params = {"bookTitle", "bookAuthor", "bookVolume"})
-    @CacheRemove
     public ResponseEntity<?> deleteTheBook(@RequestParam(name = "bookTitle") String title,
                                            @RequestParam(name = "bookAuthor") String author,
                                            @RequestParam(name = "bookVolume") Integer volume) {

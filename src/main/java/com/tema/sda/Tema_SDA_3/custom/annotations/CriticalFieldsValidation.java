@@ -1,7 +1,7 @@
-package com.tema.sda.Tema_SDA_3.custom.annotations;
+package com.tema.sda.Tema_SDA_3.validation.annotations;
 
 
-import com.tema.sda.Tema_SDA_3.custom.validation.CriticalFieldsValidationImpl;
+import com.tema.sda.Tema_SDA_3.validation.validation.CriticalFieldsValidationImpl;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

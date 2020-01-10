@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
+import javax.cache.annotation.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
+@CacheDefaults(cacheName = "bookCache")
 public class BookFacadeImpl implements BookFacade {
 
     private final CircuitBreaker circuitBreaker;
@@ -36,7 +38,8 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
-    public Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle) {
+    @CacheResult
+    public Optional<Book> findByTitle(@NotNull @NotEmpty @CacheKey final String bookTitle) {
         Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findByTitle(bookTitle)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the findByTitle function!");
@@ -45,7 +48,8 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
-    public Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum) {
+    @CacheResult
+    public Optional<Book> findAllByTitleAndAuthorAndVolum(@CacheKey final String title, @CacheKey final String author, @CacheKey final int volum) {
         Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAllByTitleAndAuthorAndVolum(title, author, volum)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the findAllByTitleAndAuthorAndVolum function!");
@@ -90,7 +94,7 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
-    public Book saveNewBook(final Book theNewBook) {
+    public Book saveNewBook(@CacheKey final Book theNewBook) {
         Try<Book> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.saveNewBook(theNewBook)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the save function!");
@@ -99,7 +103,8 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
-    public boolean updateTheBook(Book theNewBook) {
+    @CachePut
+    public boolean updateTheBook(@CacheKey Book theNewBook) {
         Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.updateTheBook(theNewBook)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the update function!");
@@ -108,7 +113,8 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
-    public boolean deleteBook(final String title) {
+    @CacheRemove
+    public boolean deleteBook(@CacheKey final String title) {
         Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.deleteBook(title)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the update function!");
@@ -118,7 +124,8 @@ public class BookFacadeImpl implements BookFacade {
 
 
     @Override
-    public boolean deleteBookByTitleAndAuthorAndVolum(String title, String author, int volum) {
+    @CacheRemove
+    public boolean deleteBookByTitleAndAuthorAndVolum(@CacheKey String title, String author, int volum) {
         Try<Boolean> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.deleteBookByTitleAndAuthorAndVolum(title, author, volum)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the deleteBookByTitleAndAuthorAndVolum function!");
