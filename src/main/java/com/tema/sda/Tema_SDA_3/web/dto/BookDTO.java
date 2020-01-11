@@ -1,6 +1,6 @@
 package com.tema.sda.Tema_SDA_3.web.dto;
 
-import com.tema.sda.Tema_SDA_3.validation.annotations.CriticalFieldsValidation;
+import com.tema.sda.Tema_SDA_3.custom.annotations.CriticalFieldsValidation;
 
 import java.io.Serializable;
 import java.util.Objects;

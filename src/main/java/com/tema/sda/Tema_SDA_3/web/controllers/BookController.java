@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -92,16 +93,7 @@ public class BookController {
     @ResponseBody
     public ResponseEntity<?> getBooksByIdOrAll(@PathVariable String bookTitle) {
         logger.info("Get the book with the title " + bookTitle);
-        return this.facade.findByTitle(bookTitle).map(book -> {
-            try {
-                BookDTO theBody = mapper.map(book, BookDTO.class);
-                final Link link = WebMvcLinkBuilder.linkTo(BookController.class).slash(book.getTitle()).withSelfRel();
-                return ResponseEntity.ok().eTag("" + book.getVersion()).location(new URI(link.getHref())).body(theBody);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
-        }).orElse(ResponseEntity.notFound().build());
+        return this.facade.findByTitle(bookTitle).map(convertEntityToDto2()).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -180,6 +172,14 @@ public class BookController {
         }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    ResponseEntity<?> singularOptions() {
+        return ResponseEntity
+                .ok()
+                .allow(HttpMethod.GET, HttpMethod.DELETE, HttpMethod.PUT, HttpMethod.POST, HttpMethod.OPTIONS)
+                .build();
+    }
+
     private Function<List<Book>, ResponseEntity<List<BookDTO>>> convertEntityToDto() {
         return books -> {
             List<BookDTO> bodyOfTheResponse = books
@@ -187,6 +187,19 @@ public class BookController {
                     .map(book -> mapper.map(book, BookDTO.class))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(bodyOfTheResponse);
+        };
+    }
+
+    private Function<Book, ResponseEntity<?>> convertEntityToDto2() {
+        return book -> {
+            try {
+                BookDTO theBody = mapper.map(book, BookDTO.class);
+                final Link link = WebMvcLinkBuilder.linkTo(BookController.class).slash(book.getTitle()).withSelfRel();
+                return ResponseEntity.ok().eTag("" + book.getVersion()).location(new URI(link.getHref())).body(theBody);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         };
     }
 
