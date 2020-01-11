@@ -14,7 +14,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -23,7 +22,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
-import static com.tema.sda.Tema_SDA_3.constants.ApplicationConstants.ENTITY_NOT_FOUND_MESSAGE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -89,7 +87,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     //Handle HttpMessageNotReadableException. Happens when request JSON is malformed.
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ServletWebRequest servletWebRequest = (ServletWebRequest) request;
         String error = "Malformed JSON request";
         return buildResponseEntity(new ApiError(BAD_REQUEST, error, ex));
     }
@@ -113,8 +110,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     //Handle DataIntegrityViolationException, inspects the cause for different DB causes.
     @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex,
-                                                                  WebRequest request) {
+    protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         if (ex.getCause() instanceof ConstraintViolationException) {
             return buildResponseEntity(new ApiError(HttpStatus.CONFLICT, "Database error", ex.getCause()));
         }
@@ -123,10 +119,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     //Handle Exception, handle generic Exception.class
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex,
-                                                                      WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex) {
         ApiError apiError = new ApiError(BAD_REQUEST);
-        apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
+        if (null != ex.getRequiredType()) {
+            apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
+        } else {
+            apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type 'Unknown'", ex.getName(), ex.getValue()));
+        }
         apiError.setDebugMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
