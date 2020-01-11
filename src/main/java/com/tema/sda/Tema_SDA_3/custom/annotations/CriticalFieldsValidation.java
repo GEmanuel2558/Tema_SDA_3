@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CriticalFieldsValidation {
 
-    String message() default "Invalid phone number";
+    String message() default "Invalid value";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 

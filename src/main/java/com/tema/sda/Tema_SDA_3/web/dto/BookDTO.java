@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class BookDTO implements Serializable {
 
-    @CriticalFieldsValidation
+    @CriticalFieldsValidation(message = "Plese provice a title of the book")
     private String title;
 
     private int totalNumberOfPages;
@@ -18,7 +18,7 @@ public class BookDTO implements Serializable {
 
     private String borrowedTo;
 
-    @CriticalFieldsValidation
+    @CriticalFieldsValidation(message = "Plese provice a author of the book")
     private String author;
 
     private String section;
