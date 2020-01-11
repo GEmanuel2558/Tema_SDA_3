@@ -1,6 +1,7 @@
 package com.tema.sda.Tema_SDA_3.business.facade;
 
 import com.tema.sda.Tema_SDA_3.data.entity.Book;
+import org.springframework.data.domain.Pageable;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 public interface BookFacade {
 
-    Iterable<Book> findAll();
+    Iterable<Book> findAll(@NotNull Pageable pageProperties);
 
     Optional<Book> findByTitle(@NotNull @NotEmpty String bookTitle);
 

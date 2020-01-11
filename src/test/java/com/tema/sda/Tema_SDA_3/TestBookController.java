@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -82,7 +83,7 @@ public class TestBookController {
     @DisplayName("GET /book - return all 4 books with succes")
     public void givenGetRequestForAllBooks_ThenGetAListOfForElements() throws Exception {
         //Given
-        doReturn(Arrays.asList(book, book2, book3, book4)).when(service).findAll();
+        doReturn(Arrays.asList(book, book2, book3, book4)).when(service).findAll(any(Pageable.class));
         mockMvc.perform(MockMvcRequestBuilders.get("/book"))
                 //Validate response code and status
                 .andExpect(status().isOk())
@@ -137,6 +138,33 @@ public class TestBookController {
                 .andExpect(jsonPath("$.borrow").value(newBookToSave.isBorrow()))
                 .andExpect(jsonPath("$.author").value(newBookToSave.getAuthor()));
 
+    }
+
+
+    @Test
+    @DisplayName("POST /book - return the saved book with failed")
+    public void givenPostRequestForWithOneBook_ThenGetFailedStatus() throws Exception {
+        Book newBookToSave = new Book();
+        newBookToSave.setAuthor(null);
+        newBookToSave.setBorrow(true);
+        newBookToSave.setBorrowedTo("Vasile");
+        newBookToSave.setSection("TEHNIC");
+        newBookToSave.setTitle("Cartea 5");
+        newBookToSave.setTotalNumberOfPages(50);
+        newBookToSave.setVolum(1);
+        doReturn(newBookToSave).when(service).saveNewBook(any(Book.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/book")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(asJsonString(newBookToSave)))
+                //Validate response code and status
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                //validate headers
+                .andExpect(header().doesNotExist(HttpHeaders.ETAG))
+                .andExpect(header().doesNotExist(HttpHeaders.LOCATION))
+                //Validate the returned fields
+                .andExpect(jsonPath("$.message").value("Validation error"));
     }
 
     @Test
