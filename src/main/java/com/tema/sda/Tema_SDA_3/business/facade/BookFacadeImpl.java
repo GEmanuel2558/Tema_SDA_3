@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.cache.annotation.*;
+import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -39,10 +40,13 @@ public class BookFacadeImpl implements BookFacade {
 
     @Override
     @CacheResult
-    public Optional<Book> findByTitle(@NotNull @NotEmpty @CacheKey final String bookTitle) {
+    public Optional<Book> findByTitle(@NotNull @NotEmpty @CacheKey final String bookTitle) throws EntityNotFoundException {
         Try<Optional<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findByTitle(bookTitle)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the findByTitle function!");
+        }
+        if (result.get().isEmpty()) {
+            throw new EntityNotFoundException("No entity in the DB had been found for the book title " + bookTitle);
         }
         return result.get();
     }
