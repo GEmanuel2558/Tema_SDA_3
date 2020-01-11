@@ -133,4 +133,12 @@ public class BookServiceTest {
         Assertions.assertSame(true, savedBookWithSuccess, "The book should be updated");
     }
 
+    @Test
+    @DisplayName("Test delete a book")
+    public void giveExistingBook_ThenDeleteTheBook() {
+        doReturn(1).when(repository).deleteBookByTitleAndAuthorAndVolum(book.getTitle(), book.getAuthor(), book.getVolum());
+        Boolean savedBookWithSuccess = this.service.deleteBookByTitleAndAuthorAndVolum(book.getTitle(), book.getAuthor(), book.getVolum());
+        Assertions.assertSame(true, savedBookWithSuccess, "The book should be wiped from the DB");
+    }
+
 }
