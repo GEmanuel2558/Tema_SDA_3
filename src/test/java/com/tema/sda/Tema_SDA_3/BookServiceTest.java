@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -110,6 +111,26 @@ public class BookServiceTest {
         Book savedBook = this.service.saveNewBook(newBookToSave);
         Assertions.assertSame(newBookToSave, savedBook, "The saved book should be the same");
         Assertions.assertNotNull(savedBook.getId());
+    }
+
+    @Test
+    @DisplayName("Test update existing book in the db")
+    public void giveExistingBook_ThenUpdateTheBook() {
+
+        Book newBookToSave = new Book();
+        newBookToSave.setAuthor("Vasilica");
+        newBookToSave.setBorrow(true);
+        newBookToSave.setBorrowedTo("Victor");
+        newBookToSave.setSection("ROMANTIC");
+        newBookToSave.setTitle("Cartea 5");
+        newBookToSave.setTotalNumberOfPages(231);
+        newBookToSave.setVolum(2);
+        newBookToSave.setId(5L);
+
+        doReturn(Optional.of(newBookToSave)).when(repository).findAllByTitle(newBookToSave.getTitle());
+
+        Boolean savedBookWithSuccess = this.service.updateTheBook(newBookToSave);
+        Assertions.assertSame(true, savedBookWithSuccess, "The book should be updated");
     }
 
 }
