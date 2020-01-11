@@ -11,9 +11,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Iterable<Book> findAll();
-
-    Page<Book> findAll(@NotNull Pageable pageRequest);
+    Iterable<Book> findAll(@NotNull Pageable pageProperties);
 
     Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle);
 

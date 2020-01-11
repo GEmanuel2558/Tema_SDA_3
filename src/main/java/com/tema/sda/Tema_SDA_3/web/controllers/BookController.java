@@ -6,6 +6,8 @@ import com.tema.sda.Tema_SDA_3.web.dto.BookDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpMethod;
@@ -43,10 +45,11 @@ public class BookController {
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<?> getAllBooks(@RequestParam(required = false, name = "sorted") Boolean sorted) {
+    public ResponseEntity<?> getAllBooks(@RequestParam(required = false, name = "sorted") Boolean sorted,
+                                         @PageableDefault(page = 0, size = 4) Pageable pageProperties) {
         if (null == sorted || !sorted) {
             logger.info("Get all the books");
-            return ResponseEntity.ok(((List<Book>) this.facade.findAll()).stream()
+            return ResponseEntity.ok(((List<Book>) this.facade.findAll(pageProperties)).stream()
                     .map(book -> mapper.map(book, BookDTO.class))
                     .collect(toList()));
         } else {

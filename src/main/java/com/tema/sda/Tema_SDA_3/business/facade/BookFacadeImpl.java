@@ -6,6 +6,7 @@ import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.vavr.control.Try;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import javax.cache.annotation.*;
@@ -30,8 +31,8 @@ public class BookFacadeImpl implements BookFacade {
     }
 
     @Override
-    public Iterable<Book> findAll() {
-        Try<Iterable<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(this.service::findAll));
+    public Iterable<Book> findAll(@NotNull Pageable pageProperties) {
+        Try<Iterable<Book>> result = Try.ofSupplier(circuitBreaker.decorateSupplier(() -> this.service.findAll(pageProperties)));
         if (result.isFailure()) {
             logger.error("We have a problem with the book service. I can't call the findAll function!");
         }

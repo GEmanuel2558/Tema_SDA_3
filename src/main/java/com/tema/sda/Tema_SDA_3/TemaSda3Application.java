@@ -22,7 +22,7 @@ public class TemaSda3Application implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-/*		Book book=new Book();
+		Book book=new Book();
 		book.setAuthor("Emanuel");
 		book.setBorrow(false);
 		book.setSection("SF");
@@ -62,6 +62,6 @@ public class TemaSda3Application implements CommandLineRunner {
 		book4.setTotalNumberOfPages(231);
 		book4.setVolum(2);
 
-		this.repository.save(book4);*/
+		this.repository.save(book4);
 	}
 }

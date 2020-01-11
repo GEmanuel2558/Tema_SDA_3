@@ -26,14 +26,8 @@ public class BookServiceImpl implements BookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Iterable<Book> findAll() {
-        return this.repository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Page<Book> findAll(@NotNull Pageable pageRequest) {
-        return repository.findAll(pageRequest);
+    public Iterable<Book> findAll(Pageable pageProperties) {
+        return this.repository.findAll(pageProperties).toList();
     }
 
     @Transactional(readOnly = true)
