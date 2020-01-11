@@ -12,14 +12,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.domain.*;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -92,6 +91,25 @@ public class BookServiceTest {
         Assertions.assertEquals(pageSize, counter, "The total number should be 2");
     }
 
+    @Test
+    @DisplayName("Test save new book")
+    public void giveNewBook_ThenSaveWithSuccessThisBookIntoDb() {
 
+        Book newBookToSave = new Book();
+        newBookToSave.setAuthor("Vasilica");
+        newBookToSave.setBorrow(true);
+        newBookToSave.setBorrowedTo("Victor");
+        newBookToSave.setSection("ROMANTIC");
+        newBookToSave.setTitle("Cartea 5");
+        newBookToSave.setTotalNumberOfPages(231);
+        newBookToSave.setVolum(2);
+        newBookToSave.setId(5L);
+
+        doReturn(newBookToSave).when(repository).save(any(Book.class));
+
+        Book savedBook = this.service.saveNewBook(newBookToSave);
+        Assertions.assertSame(newBookToSave, savedBook, "The saved book should be the same");
+        Assertions.assertNotNull(savedBook.getId());
+    }
 
 }
