@@ -24,43 +24,43 @@ public class BookServiceImpl implements BookService {
         this.repository = repository;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Iterable<Book> findAll(Pageable pageProperties) {
         return this.repository.findAll(pageProperties).toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Optional<Book> findByTitle(@NotNull @NotEmpty final String bookTitle) {
         return this.repository.findAllByTitle(bookTitle);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Optional<Book> findAllByTitleAndAuthorAndVolum(final String title, final String author, final int volum) {
         return this.repository.findAllByTitleAndAuthorAndVolum(title, author, volum);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Optional<List<Book>> getAllBooksSortedByTotalNumberOfPages() {
         return this.repository.customGetAllBooksSortedByTotalNumberOfPages();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Optional<List<Book>> findAllBooksThatAreBorrowed(final Boolean isBorrow) {
         return this.repository.customGetAllBooksThatAreBorrowed(isBorrow);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Optional<List<Book>> findAllByVolum(int volum) {
         return this.repository.findAllByVolum(volum);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     @Override
     public Optional<List<Book>> getAllBooksBorrowedTo(final String borrowedTo) {
         return this.repository.customGetAllBooksBorrowedTo(borrowedTo);
